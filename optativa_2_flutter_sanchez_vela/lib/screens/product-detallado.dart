@@ -28,13 +28,13 @@ class ProductDetailScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const Padding(padding:EdgeInsets.all(18.0)),
             ProductImageWidget(imageUrl: imageUrl),
             ProductDetailsWidget(title: title, description: description),
             PriceStockWidget(price: price, stock: stock),
             CustomButtom(title: "Agregar",
               icon: Icons.add,
               onClick: () {
-                // Acción del botón "Agregar"
                 print('Producto agregado');
               },
             ),

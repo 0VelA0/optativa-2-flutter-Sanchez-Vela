@@ -15,7 +15,7 @@ class LoginInputs extends StatelessWidget {
 
     return Column(
       children: [
-        const Padding(padding: EdgeInsets.all(10.0)),
+        const Padding(padding: EdgeInsets.all(18.0)),
         Customcaja(placeholder: "Ingresa tu usuario", controller: usernameController),
         const Padding(padding: EdgeInsets.all(10.0)),
         Customcaja(placeholder: "Ingresa tu contraseña", controller: passwordController),
