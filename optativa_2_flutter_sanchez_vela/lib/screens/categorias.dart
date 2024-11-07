@@ -1,66 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:optativa_2_flutter_sanchez_vela/widgets/custom_appbar.dart';
+import '../widgets/custom_appbar.dart';
 import '../modules/categories/domain/dto/categories_response.dart';
 import '../modules/categories/useCase/category_usecase.dart';
-import 'productos-por-categoria.dart'; // Importa la pantalla de productos por categoría
+import '../router/routers.dart';
 
-class CategoryScreen extends StatefulWidget {
+class CategoryScreen extends StatelessWidget {
   final GetCategoriesUseCase getCategoriesUseCase;
 
-  const CategoryScreen({Key? key, required this.getCategoriesUseCase}) : super(key: key);
-
-  @override
-  _CategoryScreenState createState() => _CategoryScreenState();
-}
-
-class _CategoryScreenState extends State<CategoryScreen> {
-  late Future<List<Category>> categoriesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    categoriesFuture = widget.getCategoriesUseCase.execute();
-  }
+  CategoryScreen({Key? key, required this.getCategoriesUseCase}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "Categorías"),
-      body: FutureBuilder<List<Category>>(
-        future: categoriesFuture,
+      body: FutureBuilder(
+        future: getCategoriesUseCase.execute(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          }
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay categorías disponibles'));
-          } else {
-            final categories = snapshot.data!;
+          }
+          if (snapshot.hasData) {
+            List<Category> categories = snapshot.data!; // Asegúrate de que tu clase Category esté bien definida
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
-                return InkWell(
+                return ListTile(
+                  title: Text(category.name),
                   onTap: () {
-                    // Navegar a la pantalla de productos de la categoría seleccionada
-                    Navigator.push(
+                    // En lugar de Navigator.push, usamos pushNamed
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => CategoryProductsScreen(category: category.name),
-                      ),
+                      Routers.productoCategoria, // Ruta definida en ListRoutes
+                      arguments: category.name,  // Pasamos la categoría como argumento
                     );
                   },
-                  child: ListTile(
-                    leading: category.url.isNotEmpty 
-                        ? Image.network(category.url, width: 50, height: 50, fit: BoxFit.cover)
-                        : Icon(Icons.image),
-                    title: Text(category.name),
-                  ),
                 );
               },
             );
           }
+          return Center(child: Text("No hay categorías disponibles"));
         },
       ),
     );

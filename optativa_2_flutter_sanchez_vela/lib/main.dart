@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
-import 'screens/loginscreen.dart';
-
+import 'router/list_routes.dart';
+import 'router/routers.dart';
+import 'package:localstorage/localstorage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp ({super.key});
+  MyApp({super.key});
+
+  final LocalStorage storage = LocalStorage('localstorage_app');
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Login App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      title: 'Flutter Demo',
+      theme: ThemeData.light().copyWith(
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.red),
       ),
-      home: const LoginScreen()
+      initialRoute: Routers.login, // Definir la ruta inicial
+      routes: ListRoutes.listScreens // Usar las rutas definidas en ListRouters
     );
   }
 }
