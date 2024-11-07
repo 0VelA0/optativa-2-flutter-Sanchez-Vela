@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'screens/productos-por-categoria.dart';
+import 'screens/categorias.dart';
+import 'screens/product-detallado.dart';
+import 'screens/loginscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const CategoryProductsScreen(category: "smartphones",),
+      home: CategoryProductsScreen(category: "smartphones",)
     );
   }
 }

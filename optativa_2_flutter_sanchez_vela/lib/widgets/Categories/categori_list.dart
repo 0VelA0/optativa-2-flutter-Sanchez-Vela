@@ -3,16 +3,26 @@ import '../../modules/categories/domain/dto/categories_credentials.dart';
 
 class CategoryItem extends StatelessWidget {
   final Category category;
+  final int index;
 
-  const CategoryItem({Key? key, required this.category}) : super(key: key);
+  CategoryItem({required this.category, required this.index});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.category, color: Colors.blue),
-      title: Text(category.name),
-      subtitle: Text(category.createdAt),
-      trailing: Icon(Icons.arrow_forward, color: Colors.red),
+      leading: Icon(
+        Icons.category,
+        color: index % 2 == 0 ? Colors.blue : Colors.red,
+      ),
+      title: Text(
+        category.name,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text("Fecha: ${DateTime.now()}"),
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.redAccent),
+      onTap: () {
+        print("Seleccionaste la categoría ${category.name}");
+      },
     );
   }
 }

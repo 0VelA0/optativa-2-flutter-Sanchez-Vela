@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../modules/productoscategoria/domain/dto/product_category_credentials.dart';
+import '../../widgets/custom_buttom.dart';
+import '../../screens/product-detallado.dart'; // Importa la pantalla de detalles de producto
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -46,6 +48,27 @@ class ProductCard extends StatelessWidget {
                 fontSize: 16,
                 color: Colors.green,
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: CustomButtom(
+              title: "Detalles",
+              icon: Icons.details,
+              onClick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailScreen(
+                      imageUrl: product.thumbnail,
+                      title: product.title,
+                      description: product.description,
+                      price: product.price,
+                      stock: product.stock,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

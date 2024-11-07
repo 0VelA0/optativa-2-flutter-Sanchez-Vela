@@ -3,6 +3,7 @@ import '../widgets/custom_appbar.dart';
 import '../widgets/Detalle_producto/productodetalle.dart';
 import '../widgets/Detalle_producto/precioystock.dart';
 import '../widgets/custom_buttom.dart';
+import '../widgets/Detalle_producto/imagewidget.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final String imageUrl;
@@ -27,10 +28,11 @@ class ProductDetailScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ProductImageWidget(imageUrl: imageUrl),
             ProductDetailsWidget(title: title, description: description),
             PriceStockWidget(price: price, stock: stock),
-            CustomButtom(title: "regresar",
-              icon: Icons.restore,
+            CustomButtom(title: "Agregar",
+              icon: Icons.add,
               onClick: () {
                 // Acción del botón "Agregar"
                 print('Producto agregado');
