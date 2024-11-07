@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  // se implementa preferedsize para poder asignarle un tamaño preterminado al appbar.
   final String title;
 
   const CustomAppBar({

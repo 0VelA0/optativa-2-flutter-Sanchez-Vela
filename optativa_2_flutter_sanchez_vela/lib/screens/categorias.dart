@@ -23,7 +23,7 @@ class CategoryScreen extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (snapshot.hasData) {
-            List<Category> categories = snapshot.data!; // Asegúrate de que tu clase Category esté bien definida
+            List<Category> categories = snapshot.data!; 
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
@@ -31,11 +31,10 @@ class CategoryScreen extends StatelessWidget {
                 return ListTile(
                   title: Text(category.name),
                   onTap: () {
-                    // En lugar de Navigator.push, usamos pushNamed
                     Navigator.pushNamed(
                       context,
                       Routers.productoCategoria, // Ruta definida en ListRoutes
-                      arguments: category.name,  // Pasamos la categoría como argumento
+                      arguments: category.name,  
                     );
                   },
                 );
