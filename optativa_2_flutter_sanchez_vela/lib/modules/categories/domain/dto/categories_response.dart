@@ -1,19 +1,19 @@
-class CategoryResponse {
-  String slug;
+class Category {
   String name;
   String url;
+  String slug;
 
-  CategoryResponse({
-    required this.slug,
+  Category({
     required this.name,
     required this.url,
+    required this.slug
   });
 
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) {
-    return CategoryResponse(
-      slug: json['slug'],
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
       name: json['name'],
-      url: json['url'],
+      url: json['imageUrl'] ?? '',
+      slug: json['slug']
     );
   }
 }

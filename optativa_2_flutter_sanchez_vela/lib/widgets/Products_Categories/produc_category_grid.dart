@@ -30,7 +30,7 @@ class _ProductGridState extends State<ProductGrid> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error al cargar productos'));
+          return Center(child: Text('Error al cargar productos: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(child: Text('No hay productos en esta categoría'));
         } else {

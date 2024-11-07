@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../custom_buttom.dart';
+import '../../screens/product-detallado.dart';
 import '../../modules/productoscategoria/domain/dto/product_category_credentials.dart';
-import '../../widgets/custom_buttom.dart';
-import '../../screens/product-detallado.dart'; // Importa la pantalla de detalles de producto
 
 class ProductCard extends StatelessWidget {
   final Product product;

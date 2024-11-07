@@ -1,32 +1,20 @@
-import '../../../../infrastructure/connection/connection.dart';
-import '../dto/categories_credentials.dart';
+// lib/repository/category_repository.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../dto/categories_response.dart';
 
 class CategoryRepository {
+  final String apiUrl = "https://dummyjson.com/products/categories";
+
   Future<List<Category>> fetchCategories() async {
-    String url = "https://dummyjson.com/products/categories";
-    Connection connection = Connection();
-    final response = await connection.get(url, headers: {
-      'Content-Type': 'application/json',
-    });
-
-    List<dynamic> categoriesJson = response as List<dynamic>;
     
-    return categoriesJson
-        .map((name) => Category(name: name as String, icon: _getIconForCategory(name)))
-        .toList();
-  }
+    final response = await http.get(Uri.parse(apiUrl));
 
-  // Método para asignar el icono (similar al de la clase Category)
-  String _getIconForCategory(String name) {
-    switch (name.toLowerCase()) {
-      case 'beauty':
-        return 'assets/icons/beauty.png';
-      case 'electronics':
-        return 'assets/icons/electronics.png';
-      // Añade más categorías
-      default:
-        return 'assets/icons/default.png';
+    if (response.statusCode == 200) {
+      List categoriesJson = json.decode(response.body);
+      return categoriesJson.map((json) => Category.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load categories');
     }
   }
 }
-

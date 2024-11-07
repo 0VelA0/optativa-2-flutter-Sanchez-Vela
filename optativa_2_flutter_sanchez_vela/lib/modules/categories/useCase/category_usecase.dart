@@ -1,10 +1,13 @@
-import '../domain/dto/categories_credentials.dart';
+// lib/usecase/get_categories_usecase.dart
+import '../domain/dto/categories_response.dart';
 import '../domain/repository/category_repository.dart';
 
-class CategoryUseCase {
-  final CategoryRepository _repository = CategoryRepository();
+class GetCategoriesUseCase {
+  final CategoryRepository repository;
+
+  GetCategoriesUseCase(this.repository);
 
   Future<List<Category>> execute() async {
-    return await _repository.fetchCategories();
+    return await repository.fetchCategories();
   }
-}
+} 

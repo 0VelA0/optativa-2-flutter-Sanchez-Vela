@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:optativa_2_flutter_sanchez_vela/widgets/custom_appbar.dart';
+import '../modules/categories/domain/dto/categories_response.dart';
 import '../modules/categories/useCase/category_usecase.dart';
-import '../modules/categories/domain/dto/categories_credentials.dart';
-import '../widgets/custom_appbar.dart';
+import 'productos-por-categoria.dart'; // Importa la pantalla de productos por categoría
 
-import '../screens/productos-por-categoria.dart'; // Importa la pantalla de productos por categoría
+class CategoryScreen extends StatefulWidget {
+  final GetCategoriesUseCase getCategoriesUseCase;
 
+  const CategoryScreen({Key? key, required this.getCategoriesUseCase}) : super(key: key);
 
-class CategoriesScreen extends StatefulWidget {
   @override
-  _CategoriesScreenState createState() => _CategoriesScreenState();
+  _CategoryScreenState createState() => _CategoryScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
-  late Future<List<Category>> _categoriesFuture;
-  final CategoryUseCase _categoryUseCase = CategoryUseCase();
+class _CategoryScreenState extends State<CategoryScreen> {
+  late Future<List<Category>> categoriesFuture;
 
   @override
   void initState() {
     super.initState();
-    //_categoriesFuture = _categoryUseCase.execute();
+    categoriesFuture = widget.getCategoriesUseCase.execute();
   }
 
   @override
@@ -26,37 +27,36 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       appBar: CustomAppBar(title: "Categorías"),
       body: FutureBuilder<List<Category>>(
-        future: _categoriesFuture,
+        future: categoriesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No se encontraron categorías.'));
+            return Center(child: Text('No hay categorías disponibles'));
           } else {
             final categories = snapshot.data!;
             return ListView.builder(
-              padding: const EdgeInsets.all(8.0),
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
-                return ListTile(
-                  title: Text(
-                    category.name,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
+                return InkWell(
                   onTap: () {
-                    // Navega a la pantalla de productos por categoría al hacer clic
+                    // Navegar a la pantalla de productos de la categoría seleccionada
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CategoryProductsScreen(
-                          category: category.name, // Pasa el nombre de la categoría
-                        ),
+                        builder: (context) => CategoryProductsScreen(category: category.name),
                       ),
                     );
                   },
+                  child: ListTile(
+                    leading: category.url.isNotEmpty 
+                        ? Image.network(category.url, width: 50, height: 50, fit: BoxFit.cover)
+                        : Icon(Icons.image),
+                    title: Text(category.name),
+                  ),
                 );
               },
             );
