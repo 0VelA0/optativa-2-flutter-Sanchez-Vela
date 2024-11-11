@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../router/routers.dart';
 
 class Headerpc extends StatelessWidget {
   final String category;
@@ -9,12 +10,23 @@ class Headerpc extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Text(
-        'Categoría: $category',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Categoría: $category',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.pushNamed(context, Routers.carritodecompras);
+            },
+          ),
+        ],
       ),
     );
   }

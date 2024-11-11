@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/Detalle_producto/productodetalle.dart';
 import '../widgets/Detalle_producto/precioystock.dart';
-import '../widgets/custom_buttom.dart';
 import '../widgets/Detalle_producto/imagewidget.dart';
+import '../widgets/Detalle_producto/verificadordecantidad.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final String imageUrl;
@@ -32,12 +32,7 @@ class ProductDetailScreen extends StatelessWidget {
             ProductImageWidget(imageUrl: imageUrl),
             ProductDetailsWidget(title: title, description: description),
             PriceStockWidget(price: price, stock: stock),
-            CustomButtom(title: "Agregar",
-              icon: Icons.add,
-              onClick: () {
-                print('Producto agregado');
-              },
-            ),
+            QuantityInputWidget(stock: stock, productName: title, price: price),
           ],
         ),
       ),

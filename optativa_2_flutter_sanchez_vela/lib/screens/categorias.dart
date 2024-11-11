@@ -4,6 +4,7 @@ import '../modules/categories/domain/dto/categories_response.dart';
 import '../modules/categories/useCase/category_usecase.dart';
 import '../router/routers.dart';
 
+
 class CategoryScreen extends StatelessWidget {
   final GetCategoriesUseCase getCategoriesUseCase;
 
@@ -19,11 +20,22 @@ class CategoryScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
+
           if (snapshot.hasError) {
+            // Comprobamos si el error es por la falta de autenticación
+            if (snapshot.error.toString().contains("No estás autenticado")) {
+              // Si no está autenticado, redirigimos a la pantalla de login
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pushReplacementNamed(context, '/login');
+              });
+              return Center(child: Text("Redirigiendo a la pantalla de inicio de sesión..."));
+            }
+
             return Center(child: Text('Error: ${snapshot.error}'));
           }
+
           if (snapshot.hasData) {
-            List<Category> categories = snapshot.data!; 
+            List<Category> categories = snapshot.data!;
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
@@ -33,14 +45,15 @@ class CategoryScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      Routers.productoCategoria, // Ruta definida en ListRoutes
-                      arguments: category.name,  
+                      Routers.productoCategoria,
+                      arguments: category.name,
                     );
                   },
                 );
               },
             );
           }
+
           return Center(child: Text("No hay categorías disponibles"));
         },
       ),

@@ -7,4 +7,6 @@ class Routers {
 
   static const productoCategoria = "productocategoria";
 
+  static const carritodecompras = "carrodecompras";
+
 }
