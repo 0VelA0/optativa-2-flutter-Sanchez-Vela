@@ -13,6 +13,11 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   List<Map<String, dynamic>> cartItems = [];
   double totalAmount = 0.0;
 
+  Future<void> _clearCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); 
+  }
+
   @override
   void initState() {
     super.initState();
@@ -120,7 +125,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Aquí puedes agregar la acción de pago o confirmación
+                      _clearCart();// Aquí puedes agregar la acción de pago o confirmación
                     },
                     child: Text(
                       'Proceder al Pago',

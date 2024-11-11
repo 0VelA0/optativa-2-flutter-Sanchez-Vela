@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'product_category_card.dart';
 import '../../modules/productoscategoria/domain/dto/product_category_credentials.dart';
 import '../../modules/productoscategoria/useCase/product_category_usecase.dart';
+import '../../modules/login/domain/repository/authservice.dart'; // Importa AuthService
 
-class ProductGrid extends StatefulWidget {
+class ProductGrid extends StatefulWidget { 
   final String category;
 
   const ProductGrid({Key? key, required this.category}) : super(key: key);
@@ -13,12 +14,14 @@ class ProductGrid extends StatefulWidget {
 }
 
 class _ProductGridState extends State<ProductGrid> {
-  final ProductUseCase _productUseCase = ProductUseCase();
+  late final ProductUseCase _productUseCase; // Hazlo `late` para inicializarlo en `initState`
   late Future<List<Product>> _productsFuture;
 
   @override
   void initState() {
     super.initState();
+    final authService = AuthService(); // Crea una instancia de AuthService
+    _productUseCase = ProductUseCase(authService); // Pasa AuthService al constructor
     _productsFuture = _productUseCase.getProductsByCategory(widget.category);
   }
 

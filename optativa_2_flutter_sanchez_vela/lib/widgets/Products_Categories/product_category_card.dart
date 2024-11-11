@@ -18,6 +18,7 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
@@ -51,7 +52,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: CustomButtom(
               title: "Detalles",
               icon: Icons.details,
@@ -71,6 +72,7 @@ class ProductCard extends StatelessWidget {
               },
             ),
           ),
+          Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
         ],
       ),
     );
