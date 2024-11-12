@@ -6,7 +6,7 @@ import '../widgets/custom_appbar.dart';
 class CategoryProductsScreen extends StatelessWidget {
   final String category;
 
-  const CategoryProductsScreen({Key? key, required this.category}) : super(key: key);
+  const CategoryProductsScreen({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {

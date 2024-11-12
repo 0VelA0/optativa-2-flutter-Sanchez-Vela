@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../widgets/custom_appbar.dart';
-
+import 'comprasfinalizadas.dart';
 
 class ShoppingCartScreen extends StatefulWidget {
   @override
@@ -15,7 +15,11 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
 
   Future<void> _clearCart() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); 
+    await prefs.remove('cart');
+    setState(() {
+      cartItems = [];
+      totalAmount = 0.0;
+    });
   }
 
   @override
@@ -32,12 +36,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
       setState(() {
         cartItems = List<Map<String, dynamic>>.from(json.decode(cartData));
         totalAmount = _calculateTotalAmount();
-        print(cartItems); // Depura la lista cargada para verificar
       });
-    } else {
-      print("No hay datos en SharedPreferences para 'cartItems'.");
     }
-}
+  }
 
   double _calculateTotalAmount() {
     return cartItems.fold(0.0, (sum, item) {
@@ -52,6 +53,40 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     });
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('cart', json.encode(cartItems));
+  }
+
+  Future<void> _finalizePurchase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<dynamic> completedPurchases = prefs.getString('purchases') != null
+        ? jsonDecode(prefs.getString('purchases')!)
+        : [];
+
+    final newPurchase = {
+      'totalAmount': totalAmount,
+      'totalProducts': cartItems.length,
+      'date': DateTime.now().toIso8601String(),
+      'items': cartItems.map((item) => {
+            'name': item['name'],
+            'quantity': item['quantity'],
+            'total': item['price'] * item['quantity'],
+          }).toList(),
+    };
+
+    completedPurchases.add(newPurchase);
+    await prefs.setString('purchases', jsonEncode(completedPurchases));
+    await _clearCart();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CompletedPurchasesScreen()),
+    );
+  }
+
+  void _viewCompletedPurchases() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CompletedPurchasesScreen()),
+    );
   }
 
   @override
@@ -76,17 +111,25 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                         margin: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
                         child: ListTile(
-                          
-                          leading: Text(
+                          leading: item['imageUrl'] != null
+                              ? Image.network(
+                                  item['imageUrl'],
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(Icons.image_not_supported),
+                          title: Text(
                             item['name'],
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          title: Text(
-                            item['price'].toString(),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            item['quantity'].toString()
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Cantidad: ${item['quantity']}'),
+                              Text('Precio: \$${item['price']}'),
+                              Text('Total: \$${(item['price'] * item['quantity']).toStringAsFixed(2)}'),
+                            ],
                           ),
                           trailing: IconButton(
                             icon: Icon(Icons.delete, color: Colors.redAccent),
@@ -94,9 +137,6 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                               _removeItem(index);
                             },
                           ),
-                          onTap: () {
-                            // Aquí puedes navegar a la pantalla de detalles
-                          },
                         ),
                       );
                     },
@@ -123,17 +163,30 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _clearCart();// Aquí puedes agregar la acción de pago o confirmación
-                    },
-                    child: Text(
-                      'Proceder al Pago',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: cartItems.isEmpty ? null : _finalizePurchase,
+                        child: Text(
+                          'Finalizar compra',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: _viewCompletedPurchases,
+                        child: Text(
+                          'Compras realizadas',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

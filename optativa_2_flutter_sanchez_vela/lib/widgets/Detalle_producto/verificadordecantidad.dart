@@ -6,6 +6,7 @@ class QuantityInputWidget extends StatefulWidget {
   final int stock; // Stock máximo disponible para el producto
   final String productName;
   final double price;
+  final String imageUrl;
   
 
   const QuantityInputWidget({
@@ -13,6 +14,8 @@ class QuantityInputWidget extends StatefulWidget {
     required this.stock,
     required this.productName,
     required this.price,
+    required this.imageUrl
+    
   }) : super(key: key);
 
   @override
@@ -31,37 +34,37 @@ class _QuantityInputWidgetState extends State<QuantityInputWidget> {
 
   Future<void> _addToCart() async {
     if (quantity == null || quantity! <= 0 || quantity! > widget.stock) {
-      // Muestra alerta si la cantidad no es válida
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ingrese una cantidad válida.')),
-      );
+      const SnackBar(content: Text('Ingrese una cantidad válida.')),
+    );
       return;
     }
 
-    // Obtén los productos almacenados en LocalStorage
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? cartData = prefs.getString('cart');
     List<dynamic> cart = cartData != null ? jsonDecode(cartData) : [];
 
-    // Revisa si el producto ya está en el carrito
     int productIndex = cart.indexWhere((item) => item['name'] == widget.productName);
 
     if (productIndex != -1) {
-      // Si ya está, actualiza la cantidad y el total
+      int currentQuantity = cart[productIndex]['quantity'];
+    
+      if (currentQuantity + quantity! > widget.stock) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No puedes agregar más de ${widget.stock} unidades de este producto.')),
+        );
+        return;
+      }
       cart[productIndex]['quantity'] += quantity!;
       cart[productIndex]['total'] = cart[productIndex]['quantity'] * widget.price;
     } else {
-      // Si no está y hay espacio, agrégalo al carrito
       if (cart.length < 7) {
-        DateTime now = DateTime.now();
         cart.add({
           'name': widget.productName,
           'quantity': quantity!,
           'price': widget.price,
           'total': quantity! * widget.price,
-          'date': now.toIso8601String(),
-          
-          
+          'imageUrl': widget.imageUrl,
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,10 +74,7 @@ class _QuantityInputWidgetState extends State<QuantityInputWidget> {
       }
     }
 
-    // Guarda el carrito actualizado en LocalStorage
     await prefs.setString('cart', jsonEncode(cart));
-
-    // Notifica que el producto fue agregado exitosamente
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Producto agregado al carrito.')),
     );

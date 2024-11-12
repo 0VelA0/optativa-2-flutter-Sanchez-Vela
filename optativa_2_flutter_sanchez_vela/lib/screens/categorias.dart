@@ -46,7 +46,7 @@ class CategoryScreen extends StatelessWidget {
                     Navigator.pushNamed(
                       context,
                       Routers.productoCategoria,
-                      arguments: category.name,
+                      arguments: category.slug,
                     );
                   },
                 );

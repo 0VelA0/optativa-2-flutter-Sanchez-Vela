@@ -32,7 +32,7 @@ class ProductDetailScreen extends StatelessWidget {
             ProductImageWidget(imageUrl: imageUrl),
             ProductDetailsWidget(title: title, description: description),
             PriceStockWidget(price: price, stock: stock),
-            QuantityInputWidget(stock: stock, productName: title, price: price),
+            QuantityInputWidget(stock: stock, productName: title, price: price, imageUrl: imageUrl,),
           ],
         ),
       ),
