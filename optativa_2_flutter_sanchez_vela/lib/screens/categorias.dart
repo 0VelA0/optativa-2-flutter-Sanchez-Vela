@@ -3,34 +3,47 @@ import '../widgets/custom_appbar.dart';
 import '../modules/categories/domain/dto/categories_response.dart';
 import '../modules/categories/useCase/category_usecase.dart';
 import '../router/routers.dart';
+import '../widgets/custom_navigationbar.dart';
+import '../screens/searchscreen.dart';
 
-
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends StatefulWidget {
   final GetCategoriesUseCase getCategoriesUseCase;
 
   CategoryScreen({Key? key, required this.getCategoriesUseCase}) : super(key: key);
+
+  @override
+  _CategoryScreenState createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  int _currentIndex = 0;
+
+  void _onNavBarTap(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SearchScreen()),
+      );
+    }
+    // Agregar lógica para otras secciones
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "Categorías"),
       body: FutureBuilder(
-        future: getCategoriesUseCase.execute(),
+        future: widget.getCategoriesUseCase.execute(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            // Comprobamos si el error es por la falta de autenticación
-            if (snapshot.error.toString().contains("No estás autenticado")) {
-              // Si no está autenticado, redirigimos a la pantalla de login
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushReplacementNamed(context, '/login');
-              });
-              return Center(child: Text("Redirigiendo a la pantalla de inicio de sesión..."));
-            }
-
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
@@ -56,6 +69,10 @@ class CategoryScreen extends StatelessWidget {
 
           return Center(child: Text("No hay categorías disponibles"));
         },
+      ),
+      bottomNavigationBar: CustomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onNavBarTap,
       ),
     );
   }
