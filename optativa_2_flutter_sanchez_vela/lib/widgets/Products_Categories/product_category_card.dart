@@ -49,26 +49,42 @@ class _ProductCardState extends State<ProductCard> {
   Future<void> _registrarProductoVisto() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'productos_vistos';
-    final String? data = prefs.getString(key);
-    List<dynamic> productosVistos = data != null ? jsonDecode(data) : [];
 
-    // Buscar si el producto ya fue visto
-    int index = productosVistos.indexWhere((item) => item['title'] == widget.product.title);
-    if (index != -1) {
-      // Incrementar el contador de visitas
-      productosVistos[index]['views'] += 1;
+    // Comprobar si existe la clave 'productos_vistos'
+    if (prefs.containsKey(key)) {
+      final String? data = prefs.getString(key);
+      List<dynamic> productosVistos = data != null ? jsonDecode(data) : [];
+
+      // Buscar si el producto ya fue visto
+      int index = productosVistos.indexWhere((item) => item['title'] == widget.product.title);
+      if (index != -1) {
+        // Incrementar el contador de visitas
+        productosVistos[index]['views'] += 1;
+      } else {
+        // Agregar un nuevo producto
+        productosVistos.add({
+          'title': widget.product.title,
+          'price': widget.product.price,
+          'thumbnail': widget.product.thumbnail,
+          'views': 1,
+        });
+      }
+
+      // Guardar la lista actualizada en SharedPreferences
+      prefs.setString(key, jsonEncode(productosVistos));
     } else {
-      // Agregar un nuevo producto
+      // Si no existe la clave, inicializar el listado vacío y agregar el producto
+      List<dynamic> productosVistos = [];
       productosVistos.add({
         'title': widget.product.title,
         'price': widget.product.price,
         'thumbnail': widget.product.thumbnail,
         'views': 1,
       });
-    }
 
-    // Guardar la lista actualizada en SharedPreferences
-    prefs.setString(key, jsonEncode(productosVistos));
+      // Guardar la lista en SharedPreferences
+      prefs.setString(key, jsonEncode(productosVistos));
+    }
   }
 
   @override
@@ -81,7 +97,6 @@ class _ProductCardState extends State<ProductCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
@@ -89,6 +104,15 @@ class _ProductCardState extends State<ProductCard> {
                 widget.product.thumbnail,
                 fit: BoxFit.cover,
                 width: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.grey,
+                      size: 50,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -116,39 +140,49 @@ class _ProductCardState extends State<ProductCard> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: isOutOfStock || isCartFull
+            child: isOutOfStock
                 ? Text(
-                    "Producto agotado",
+                    "Stock insuficiente",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   )
-                : CustomButtom(
-                    title: "Detalles",
-                    icon: Icons.details,
-                    onClick: () async {
-                      // Registrar el producto como visto
-                      await _registrarProductoVisto();
-
-                      // Navegar a la pantalla de detalles
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailScreen(
-                            imageUrl: widget.product.thumbnail,
-                            title: widget.product.title,
-                            description: widget.product.description,
-                            price: widget.product.price,
-                            stock: widget.product.stock,
-                          ),
+                : isCartFull
+                    ? Text(
+                        "Carrito lleno",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                  ),
+                      )
+                    : CustomButtom(
+                        title: "Detalles",
+                        icon: Icons.details,
+                        onClick: () async {
+                          // Registrar el producto como visto
+                          await _registrarProductoVisto();
+
+                          // Navegar a la pantalla de detalles
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailScreen(
+                                imageUrl: widget.product.thumbnail,
+                                title: widget.product.title,
+                                description: widget.product.description,
+                                price: widget.product.price,
+                                stock: widget.product.stock,
+                                productId: widget.product.id,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
           ),
-          Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+          const SizedBox(height: 8.0),
         ],
       ),
     );

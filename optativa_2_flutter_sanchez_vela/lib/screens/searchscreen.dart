@@ -142,6 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             description: product['description'],
                                             price: product['price'],
                                             stock: product['stock'],
+                                            productId: product['id'],
                                           ),
                                         ),
                                       );

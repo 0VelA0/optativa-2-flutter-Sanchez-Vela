@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../modules/productosvistos/repository/productosvistos_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../modules/productosvistos/dto/productosvistos_dto.dart';
 import '../widgets/custom_appbar.dart';
 
@@ -14,13 +15,25 @@ class _ProductosVistosScreenState extends State<ProductosVistosScreen> {
   @override
   void initState() {
     super.initState();
-    _productosVistos = ProductosService.obtenerProductosVistos();
+    _productosVistos = _obtenerProductosVistos();
+  }
+
+  Future<List<Productovistos>> _obtenerProductosVistos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final productosJson = prefs.getString('productos_vistos');
+
+    if (productosJson == null || productosJson.isEmpty) {
+      return [];
+    }
+
+    final List<dynamic> decodedJson = jsonDecode(productosJson);
+    return decodedJson.map((item) => Productovistos.fromJson(item)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Productos Vistos'),
+      appBar: CustomAppBar(title: "Porductos vistos"),
       body: FutureBuilder<List<Productovistos>>(
         future: _productosVistos,
         builder: (context, snapshot) {
@@ -28,27 +41,43 @@ class _ProductosVistosScreenState extends State<ProductosVistosScreen> {
             return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error al cargar los productos.'));
+            return Center(
+              child: Text(
+                'Error al cargar los productos. Inténtalo más tarde.',
+                style: TextStyle(fontSize: 16),
+              ),
+            );
           }
 
           final productos = snapshot.data ?? [];
           if (productos.isEmpty) {
-            return Center(child: Text('No hay productos vistos.'));
+            return Center(
+              child: Text(
+                'No hay productos vistos.',
+                style: TextStyle(fontSize: 16),
+              ),
+            );
           }
 
           return ListView.builder(
+            padding: EdgeInsets.all(10),
             itemCount: productos.length,
             itemBuilder: (context, index) {
               final producto = productos[index];
-              return ListTile(
-                title: Text(producto.nombre),
-                subtitle: Text('Precio: \$${producto.precio.toStringAsFixed(2)} | Vistas: ${producto.visitas}'),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    // Lógica para agregar al carrito
-                    Navigator.pushNamed(context, '/carritodecompras');
-                  },
-                  child: Text('Agregar'),
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: ListTile(
+                  title: Text(
+                    producto.title,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Precio: \$${producto.price}\nVistas: ${producto.views}',
+                  ),
                 ),
               );
             },

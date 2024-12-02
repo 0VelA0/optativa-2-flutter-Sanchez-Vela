@@ -1,25 +1,33 @@
 class Productovistos {
-  final String nombre;
-  final double precio;
-  int visitas;
+  final String title;
+  final double price;
+  final String thumbnail;
+  final int views;
 
-  Productovistos({required this.nombre, required this.precio, this.visitas = 1});
+  Productovistos({
+    required this.title,
+    required this.price,
+    required this.thumbnail,
+    required this.views,
+  });
 
-  // Convertir el producto a un mapa para almacenarlo en shared_preferences
-  Map<String, dynamic> toMap() {
+  // Convertir el objeto a un mapa para almacenarlo como JSON
+  Map<String, dynamic> toJson() {
     return {
-      'nombre': nombre,
-      'precio': precio,
-      'visitas': visitas,
+      'title': title,
+      'price': price,
+      'thumbnail': thumbnail,
+      'views': views,
     };
   }
 
-  // Crear un producto desde un mapa
-  factory Productovistos.fromMap(Map<String, dynamic> map) {
+  // Crear un objeto a partir de un mapa JSON
+  factory Productovistos.fromJson(Map<String, dynamic> json) {
     return Productovistos(
-      nombre: map['nombre'],
-      precio: map['precio'],
-      visitas: map['visitas'],
+      title: json['title'],
+      price: json['price'],
+      thumbnail: json['thumbnail'],
+      views: json['views'],
     );
   }
 }

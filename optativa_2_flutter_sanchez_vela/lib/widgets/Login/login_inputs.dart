@@ -19,6 +19,12 @@ class LoginInputs extends StatelessWidget {
     await prefs.remove('cart'); // Elimina el carrito de SharedPreferences
   }
 
+  // Función para guardar el nombre de usuario
+  Future<void> _saveUsername(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);  // Guarda el nombre de usuario
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
@@ -48,6 +54,9 @@ class LoginInputs extends StatelessWidget {
 
               // Limpia el carrito en SharedPreferences al iniciar sesión
               await _clearCart();
+
+              // Guarda el nombre de usuario en SharedPreferences
+              await _saveUsername(user);
 
               // Si el login fue exitoso, navega a la pantalla de categorías
               Navigator.push(

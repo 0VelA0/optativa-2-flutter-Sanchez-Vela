@@ -6,6 +6,7 @@ import '../router/routers.dart';
 import '../widgets/custom_navigationbar.dart';
 import '../screens/searchscreen.dart';
 import '../screens/pvsscreen.dart';
+import '../screens/perfilscreen.dart';
 
 class CategoryScreen extends StatefulWidget {
   final GetCategoriesUseCase getCategoriesUseCase;
@@ -36,6 +37,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if(index==2){
       Navigator.push(context,
        MaterialPageRoute(builder: (context)=> ProductosVistosScreen()));
+    }
+    if(index == 3){
+      Navigator.push(context,
+       MaterialPageRoute(builder: (context)=> ProfileScreen()));
     }
     // Agregar lógica para otras secciones
   }
