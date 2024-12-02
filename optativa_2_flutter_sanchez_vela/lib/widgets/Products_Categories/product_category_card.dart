@@ -46,6 +46,31 @@ class _ProductCardState extends State<ProductCard> {
     }
   }
 
+  Future<void> _registrarProductoVisto() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'productos_vistos';
+    final String? data = prefs.getString(key);
+    List<dynamic> productosVistos = data != null ? jsonDecode(data) : [];
+
+    // Buscar si el producto ya fue visto
+    int index = productosVistos.indexWhere((item) => item['title'] == widget.product.title);
+    if (index != -1) {
+      // Incrementar el contador de visitas
+      productosVistos[index]['views'] += 1;
+    } else {
+      // Agregar un nuevo producto
+      productosVistos.add({
+        'title': widget.product.title,
+        'price': widget.product.price,
+        'thumbnail': widget.product.thumbnail,
+        'views': 1,
+      });
+    }
+
+    // Guardar la lista actualizada en SharedPreferences
+    prefs.setString(key, jsonEncode(productosVistos));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -103,7 +128,11 @@ class _ProductCardState extends State<ProductCard> {
                 : CustomButtom(
                     title: "Detalles",
                     icon: Icons.details,
-                    onClick: () {
+                    onClick: () async {
+                      // Registrar el producto como visto
+                      await _registrarProductoVisto();
+
+                      // Navegar a la pantalla de detalles
                       Navigator.push(
                         context,
                         MaterialPageRoute(

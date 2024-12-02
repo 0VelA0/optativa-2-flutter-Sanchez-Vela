@@ -5,6 +5,7 @@ import '../modules/categories/useCase/category_usecase.dart';
 import '../router/routers.dart';
 import '../widgets/custom_navigationbar.dart';
 import '../screens/searchscreen.dart';
+import '../screens/pvsscreen.dart';
 
 class CategoryScreen extends StatefulWidget {
   final GetCategoriesUseCase getCategoriesUseCase;
@@ -28,6 +29,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
         context,
         MaterialPageRoute(builder: (context) => SearchScreen()),
       );
+    }
+    if (index == 1){
+      Navigator.pushNamed(context, Routers.carritodecompras);
+    }
+    if(index==2){
+      Navigator.push(context,
+       MaterialPageRoute(builder: (context)=> ProductosVistosScreen()));
     }
     // Agregar lógica para otras secciones
   }

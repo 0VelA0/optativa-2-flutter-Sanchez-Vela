@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../widgets/custom_appbar.dart';
+import '../widgets/custom_buttom.dart';
+import 'product-detallado.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -85,6 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
+                            elevation: 4,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -120,6 +123,29 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontSize: 16,
                                       color: Colors.green,
                                     ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 8.0),
+                                  child: CustomButtom(
+                                    title: "Detalles",
+                                    icon: Icons.details,
+                                    onClick: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProductDetailScreen(
+                                            imageUrl: product['thumbnail'],
+                                            title: product['title'],
+                                            description: product['description'],
+                                            price: product['price'],
+                                            stock: product['stock'],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
