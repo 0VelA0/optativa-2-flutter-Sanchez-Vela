@@ -16,7 +16,8 @@ class LoginInputs extends StatelessWidget {
   // Función para limpiar los datos del carrito en SharedPreferences
   Future<void> _clearCart() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cart'); // Elimina el carrito de SharedPreferences
+    await prefs.remove('cart');
+    await prefs.remove('productos_vistos'); // Elimina el carrito de SharedPreferences
   }
 
   // Función para guardar el nombre de usuario
